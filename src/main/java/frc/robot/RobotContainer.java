@@ -84,4 +84,8 @@ public class RobotContainer {
         intakeSystem.stop();
     }
 
+    public void enabledInit() {
+        armSystem.armEnabled();
+    }
+
 }

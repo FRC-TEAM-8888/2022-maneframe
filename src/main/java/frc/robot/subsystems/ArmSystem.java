@@ -18,11 +18,8 @@ public class ArmSystem extends SubsystemBase implements Loggable {
     private State armState;
 
     public ArmSystem() {
+        System.out.println("ArmSystem");
         armMotor = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
-        armMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-
-        // starting state is holding arm up
-        holdArmUp();
     }
 
     public void moveArmUp() {
@@ -36,6 +33,7 @@ public class ArmSystem extends SubsystemBase implements Loggable {
     }
 
     public void holdArmUp() {
+        System.out.println("holdArmUp!!");
         armState = State.ARM_UP;
         armMotor.set(ARM_HOLD_UP);
     }
@@ -58,9 +56,16 @@ public class ArmSystem extends SubsystemBase implements Loggable {
     }
 
     public void armDisabled() {
+        System.out.println("armDisabled!!");
         armState = State.ARM_UP;
         armMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         stop();
+    }
+
+    public void armEnabled() {
+        System.out.println("armEnabled!!");
+        holdArmUp();
+        armMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     }
 
     public enum State {

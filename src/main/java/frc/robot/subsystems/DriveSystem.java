@@ -15,10 +15,6 @@ public class DriveSystem extends SubsystemBase {
 
     private final DifferentialDrive drive;
 
-    //private FileWriter driveLoggingFileWriter;
-    private final Timer timer = new Timer();
-    private final PowerDistribution botPDP = new PowerDistribution();
-
     // Default to Logitech Gamepad using 2 sticks
     private final SendableChooser<Integer> driveTypeChooser;
     private int driveType = 8;
@@ -28,6 +24,8 @@ public class DriveSystem extends SubsystemBase {
      * Creates a new DriveBase.
      */
     public DriveSystem(MyJoystick myController) {
+        this.driveController = myController;
+
         // Setup Left Side Motors
         final CANSparkMax leftMotor1 = new CANSparkMax(Constants.DriveConstants.kLeftMotor1Port, CANSparkMaxLowLevel.MotorType.kBrushed);
         final CANSparkMax leftMotor2 = new CANSparkMax(Constants.DriveConstants.kLeftMotor2Port, CANSparkMaxLowLevel.MotorType.kBrushed);
@@ -35,7 +33,9 @@ public class DriveSystem extends SubsystemBase {
 
         // Setup Right Side Motors
         final CANSparkMax rightMotor1 = new CANSparkMax(Constants.DriveConstants.kRightMotor1Port, CANSparkMaxLowLevel.MotorType.kBrushed);
+        rightMotor1.setInverted(true);
         final CANSparkMax rightMotor2 = new CANSparkMax(Constants.DriveConstants.kRightMotor2Port, CANSparkMaxLowLevel.MotorType.kBrushed);
+        rightMotor2.setInverted(true);
         final MotorControllerGroup rightSideMotors = new MotorControllerGroup(rightMotor1, rightMotor2);
 
         drive = new DifferentialDrive(leftSideMotors, rightSideMotors);
@@ -107,9 +107,9 @@ public class DriveSystem extends SubsystemBase {
         }
 
         if (chooserDriveType == 1 || chooserDriveType == 4 || chooserDriveType == 7) {
-            return new DriveTeleop(this, driveController, chooserDriveType, true);
+            return new DriveTeleop(this, driveController, true);
         } else {
-            return new DriveTeleop(this, driveController, chooserDriveType);
+            return new DriveTeleop(this, driveController, false);
         }
     }
 
