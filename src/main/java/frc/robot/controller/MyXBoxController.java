@@ -57,6 +57,11 @@ public class MyXBoxController extends MyBaseJoystick {
     }
 
     @Override
+    public boolean getAllowTurnInPlace() {
+        return false;
+    }
+
+    @Override
     public void setupIntakeCargo(Command intakeCargoCommand) {
         this.intakeCargoCommand = intakeCargoCommand;
         // setup button for intake

@@ -5,6 +5,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.*;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj2.command.*;
 import io.github.oblarg.oblog.*;
@@ -32,6 +33,7 @@ public class Robot extends TimedRobot
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
         robotContainer = new RobotContainer();
+        CameraServer.startAutomaticCapture();
         Logger.configureLoggingAndConfig(robotContainer, false);
     }
     

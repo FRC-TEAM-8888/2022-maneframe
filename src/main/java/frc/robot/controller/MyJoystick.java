@@ -9,6 +9,7 @@ public interface MyJoystick {
     double getLeftY();
     double getRightX();
     double getRightY();
+    boolean getAllowTurnInPlace();
 
     void setupIntakeCargo(Command intakeCargoCommand);
     void setupSpitOutCargo(Command spitOutCargoCommand);

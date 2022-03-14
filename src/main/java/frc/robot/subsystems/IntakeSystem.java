@@ -9,17 +9,16 @@ public class IntakeSystem extends SubsystemBase {
 
     public IntakeSystem() {
         intakeMotor = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushed);
-        intakeMotor.restoreFactoryDefaults();
         intakeMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        intakeMotor.burnFlash();
+        intakeMotor.enableVoltageCompensation(11);
     }
 
     public void cargoIn() {
-        intakeMotor.set(.8);
+        intakeMotor.setVoltage(12 * -1);
     }
 
     public void cargoOut() {
-        intakeMotor.set(-.8);
+        intakeMotor.setVoltage(12 * 1);
     }
 
     public void stop() {

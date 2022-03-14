@@ -9,8 +9,9 @@ public class ArmUp extends SequentialCommandGroup {
     public ArmUp(ArmSystem armSystem) {
         addRequirements(armSystem);
         addCommands(
+                new PrintCommand("ARM UP!!"),
                 new InstantCommand(armSystem::moveArmUp, armSystem),
-                new WaitCommand(1.5),
+                new WaitCommand(1.25),
                 new InstantCommand(armSystem::holdArmUp)
         );
     }

@@ -9,8 +9,9 @@ public class ArmDown extends SequentialCommandGroup {
     public ArmDown(ArmSystem armSystem) {
         addRequirements(armSystem);
         addCommands(
+                new PrintCommand("ARM DOWN!!"),
                 new InstantCommand(armSystem::moveArmDown, armSystem),
-                new WaitCommand(1.3),
+                new WaitCommand(1.05),
                 new InstantCommand(armSystem::holdArmDown, armSystem)
         );
     }

@@ -22,10 +22,12 @@ public class RobotContainer {
     // The robot's subsystems and commands are defined here...
 
     // Default the controller to Logitech Gamepad w/2 stick drive
-    MyJoystick myController = new MyLogitechController(new GenericHID(0), true);
+    MyJoystick myController = new MyLogitechController(new GenericHID(0), new GenericHID(1), true);
     private final DriveSystem driveSystem;
     private final IntakeSystem intakeSystem;
     private final ArmSystem armSystem;
+
+    private boolean goForAuto;
 
 
     /**
@@ -35,8 +37,9 @@ public class RobotContainer {
         driveSystem = new DriveSystem(myController);
         intakeSystem = new IntakeSystem();
         armSystem = new ArmSystem();
-        SmartDashboard.putData(armSystem);
         configureButtonBindings();
+        SmartDashboard.putBoolean("Go For Auto", true);
+        goForAuto = SmartDashboard.getBoolean("Go For Auto", true);
     }
 
 
@@ -72,8 +75,13 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
+        goForAuto = SmartDashboard.getBoolean("Go For Auto", true);
         // An ExampleCommand will run in autonomous
-        return null;
+        if (goForAuto) {
+            return new Auto(intakeSystem, driveSystem);
+        } else {
+            return null;
+        }
     }
 
     public void disabledInit() {

@@ -10,25 +10,28 @@ import frc.robot.*;
 import frc.robot.commands.*;
 import frc.robot.controller.*;
 
+import static frc.robot.Constants.DriveConstants.*;
+
 
 public class DriveSystem extends SubsystemBase {
 
     private final DifferentialDrive drive;
+    private final PowerDistribution pdp = new PowerDistribution(0, PowerDistribution.ModuleType.kCTRE);
 
     // Default to Logitech Gamepad using 2 sticks
-    private final SendableChooser<Integer> driveTypeChooser;
-    private int driveType = 8;
-    private MyJoystick driveController;
+    //private final SendableChooser<Integer> driveTypeChooser;
+    //private int driveType = 8;
+    //private MyJoystick driveController;
 
     /**
      * Creates a new DriveBase.
      */
     public DriveSystem(MyJoystick myController) {
-        this.driveController = myController;
+        //this.driveController = myController;
 
         // Setup Left Side Motors
-        final CANSparkMax leftMotor1 = new CANSparkMax(Constants.DriveConstants.kLeftMotor1Port, CANSparkMaxLowLevel.MotorType.kBrushed);
-        final CANSparkMax leftMotor2 = new CANSparkMax(Constants.DriveConstants.kLeftMotor2Port, CANSparkMaxLowLevel.MotorType.kBrushed);
+        final CANSparkMax leftMotor1 = new CANSparkMax(kLeftMotor1Port, CANSparkMaxLowLevel.MotorType.kBrushed);
+        final CANSparkMax leftMotor2 = new CANSparkMax(kLeftMotor2Port, CANSparkMaxLowLevel.MotorType.kBrushed);
         final MotorControllerGroup leftSideMotors = new MotorControllerGroup(leftMotor1, leftMotor2);
 
         // Setup Right Side Motors
@@ -40,7 +43,7 @@ public class DriveSystem extends SubsystemBase {
 
         drive = new DifferentialDrive(leftSideMotors, rightSideMotors);
         drive.setDeadband(.01);
-
+        setDefaultCommand(new DriveTeleop(this, myController, false));
 
         /*
         Drive Type:
@@ -54,6 +57,7 @@ public class DriveSystem extends SubsystemBase {
         8 :: 1 Logitech Ctrl  - ArcadeDrive (2 sticks)
         9 :: 1 Logitech Ctrl  - ArcadeDrive (left stick)
         */
+        /*
         driveTypeChooser = new SendableChooser<>();
         driveTypeChooser.addOption("2 Flight Sticks - Tank", 1);
         driveTypeChooser.addOption("2 Flight Sticks - Arcade", 2);
@@ -66,14 +70,16 @@ public class DriveSystem extends SubsystemBase {
         driveTypeChooser.addOption("Logitech Ctrl - Arcade - 1 stick", 9);
         SmartDashboard.putData("Drive Type", driveTypeChooser);
         setDefaultCommand(changeDriveCommand(driveType));
+
+         */
     }
 
-    public void arcadeDrive(double speed, double turn) {
-        drive.arcadeDrive(speed, turn * -1);
+    public void arcadeDrive(double speed, double turn, boolean squaredInputs) {
+        drive.arcadeDrive(speed, turn * -1, squaredInputs);
     }
 
-    public void tankDrive(double leftSide, double rightSide) {
-        drive.tankDrive(leftSide, rightSide);
+    public void tankDrive(double leftSide, double rightSide, boolean squaredInputs) {
+        drive.tankDrive(leftSide, rightSide, squaredInputs);
     }
 
     public void stop() {
@@ -83,14 +89,22 @@ public class DriveSystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("LEFT POWER 1", pdp.getCurrent(1));
+        SmartDashboard.putNumber("LEFT POWER 2", pdp.getCurrent(0));
+        SmartDashboard.putNumber("RIGHT POWER 1", pdp.getCurrent(3));
+        SmartDashboard.putNumber("RIGHT POWER 2", pdp.getCurrent(2));
+        /*
         int chooserDriveType = driveTypeChooser.getSelected();
         if (driveType < 0 || chooserDriveType != driveType) {
             getDefaultCommand().cancel();
             setDefaultCommand(changeDriveCommand(chooserDriveType));
             driveType = chooserDriveType;
         }
+
+         */
     }
 
+    /*
     public Command changeDriveCommand(int chooserDriveType) {
         if (chooserDriveType == 1 || chooserDriveType == 2 || chooserDriveType == 3) {
             // Joysticks/Flight Sticks
@@ -103,7 +117,9 @@ public class DriveSystem extends SubsystemBase {
         } else if (chooserDriveType == 4 || chooserDriveType == 5 || chooserDriveType == 6) {
             driveController = new MyXBoxController(new XboxController(0), driveController, chooserDriveType != 6);
         } else if (chooserDriveType == 7 || chooserDriveType == 8 || chooserDriveType == 9) {
-            driveController = new MyLogitechController(new GenericHID(0), driveController, chooserDriveType != 9);
+            // IF there is a CO DRIVER... uncomment this and comment out the single controller line
+            driveController = new MyLogitechController(new GenericHID(0), new GenericHID(1), driveController, chooserDriveType != 9);
+            //driveController = new MyLogitechController(new GenericHID(0), driveController, chooserDriveType != 9);
         }
 
         if (chooserDriveType == 1 || chooserDriveType == 4 || chooserDriveType == 7) {
@@ -112,5 +128,7 @@ public class DriveSystem extends SubsystemBase {
             return new DriveTeleop(this, driveController, false);
         }
     }
+
+     */
 
 }

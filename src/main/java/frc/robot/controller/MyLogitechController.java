@@ -8,7 +8,16 @@ import edu.wpi.first.wpilibj2.command.button.*;
 public class MyLogitechController extends MyBaseJoystick {
 
     private final GenericHID gamepadController;
+    private final GenericHID coDriverController;
     private final boolean use2Sticks;
+    private final boolean coDriver;
+
+    public MyLogitechController(GenericHID gamepadController, boolean use2Sticks) {
+        this.gamepadController = gamepadController;
+        this.use2Sticks = use2Sticks;
+        this.coDriverController = null;
+        this.coDriver = false;
+    }
 
     public MyLogitechController(GenericHID gamepadController) {
         this(gamepadController, true);
@@ -19,13 +28,29 @@ public class MyLogitechController extends MyBaseJoystick {
         setupButtons(oldController);
     }
 
-    public MyLogitechController(GenericHID gamepadController, boolean use2Sticks) {
-        this.gamepadController = gamepadController;
-        this.use2Sticks = use2Sticks;
-    }
-
     public MyLogitechController(GenericHID gamepadController, MyJoystick oldController, boolean use2Sticks) {
         this(gamepadController, use2Sticks);
+        setupButtons(oldController);
+    }
+
+    public MyLogitechController(GenericHID gamepadController, GenericHID coDriverController, boolean use2Sticks) {
+        this.gamepadController = gamepadController;
+        this.use2Sticks = use2Sticks;
+        this.coDriverController = coDriverController;
+        this.coDriver = true;
+    }
+
+    public MyLogitechController(GenericHID gamepadController, GenericHID coDriverController) {
+        this(gamepadController, coDriverController, true);
+    }
+
+    public MyLogitechController(GenericHID gamepadController, GenericHID coDriverController, MyJoystick oldController) {
+        this(gamepadController, coDriverController);
+        setupButtons(oldController);
+    }
+
+    public MyLogitechController(GenericHID gamepadController, GenericHID coDriverController, MyJoystick oldController, boolean use2Sticks) {
+        this(gamepadController, coDriverController, use2Sticks);
         setupButtons(oldController);
     }
 
@@ -58,27 +83,48 @@ public class MyLogitechController extends MyBaseJoystick {
     }
 
     @Override
+    public boolean getAllowTurnInPlace() {
+        return gamepadController.getRawButton(3);
+    }
+
+    @Override
     public void setupIntakeCargo(Command intakeCargoCommand) {
         this.intakeCargoCommand = intakeCargoCommand;
-        new JoystickButton(gamepadController, 5).whileHeld(intakeCargoCommand);
+        if (coDriver) {
+            new JoystickButton(coDriverController, 6).whileHeld(intakeCargoCommand);
+        } else {
+            new JoystickButton(gamepadController, 6).whileHeld(intakeCargoCommand);
+        }
     }
 
     @Override
     public void setupSpitOutCargo(Command spitOutCargoCommand) {
         this.spitOutCargoCommand = spitOutCargoCommand;
-        new JoystickButton(gamepadController, 6).whileHeld(spitOutCargoCommand);
+        if (coDriver) {
+            new JoystickButton(coDriverController, 5).whileHeld(spitOutCargoCommand);
+        } else {
+            new JoystickButton(gamepadController, 5).whileHeld(spitOutCargoCommand);
+        }
     }
 
     @Override
     public void setupArmUp(Command armUpCommand) {
         this.armUpCommand = armUpCommand;
-        new JoystickButton(gamepadController, 2).whenPressed(armUpCommand);
+        if (coDriver) {
+            new JoystickButton(coDriverController, 2).whenPressed(armUpCommand);
+        } else {
+            new JoystickButton(gamepadController, 2).whenPressed(armUpCommand);
+        }
     }
 
     @Override
     public void setupArmDown(Command armDownCommand) {
         this.armDownCommand = armDownCommand;
-        new JoystickButton(gamepadController, 1).whenPressed(armDownCommand);
+        if (coDriver) {
+            new JoystickButton(coDriverController, 1).whenPressed(armDownCommand);
+        } else {
+            new JoystickButton(gamepadController, 1).whenPressed(armDownCommand);
+        }
     }
 
 }

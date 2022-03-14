@@ -5,17 +5,13 @@ import frc.robot.controller.*;
 import frc.robot.subsystems.*;
 
 
-public class DriveTeleop extends CommandBase {
+public class AutoDrive extends CommandBase {
 
     private final DriveSystem driveSystem;
-    private final MyJoystick driveController;
-    private final boolean isTankDrive;
 
-    public DriveTeleop(DriveSystem driveSystem, MyJoystick driveController, boolean isTankDrive) {
+    public AutoDrive(DriveSystem driveSystem) {
         addRequirements(driveSystem);
         this.driveSystem = driveSystem;
-        this.driveController = driveController;
-        this.isTankDrive = isTankDrive;
     }
 
     // Called when the command is initially scheduled.
@@ -26,11 +22,7 @@ public class DriveTeleop extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (isTankDrive) {
-            driveSystem.tankDrive(driveController.getLeftY(), driveController.getRightY(), true);
-        } else {
-            driveSystem.arcadeDrive(driveController.getLeftY(), driveController.getRightX(), true);
-        }
+        driveSystem.tankDrive(.3, .3, false);
     }
 
     // Called once the command ends or is interrupted.
