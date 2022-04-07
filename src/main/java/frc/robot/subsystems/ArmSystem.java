@@ -13,8 +13,8 @@ public class ArmSystem extends SubsystemBase implements Loggable {
 
     private static final double ARM_SPEED_UP = .4;
     private static final double ARM_SPEED_DOWN = -.4;
-//    private static final double ARM_SPEED_UP = .05;
-//    private static final double ARM_SPEED_DOWN = -.08;
+//    private static final double ARM_SPEED_UP = .2;
+//    private static final double ARM_SPEED_DOWN = -.2;
 
     private static final double ARM_HOLD_UP = .09;
     private static final double ARM_HOLD_DOWN = -.15;
