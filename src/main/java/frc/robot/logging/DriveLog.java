@@ -5,8 +5,12 @@ public class DriveLog {
 
     private double time;
     private double voltage;
-    private double stickX;
-    private double stickY;
+    private double leftMotorCurrent1;
+    private double leftMotorCurrent2;
+    private double rightMotorCurrent1;
+    private double rightMotorCurrent2;
+    private double arcadeSpeed;
+    private double arcadeRotation;
     private double leftSignal;
     private double rightSignal;
     private double acceleration;
@@ -16,20 +20,6 @@ public class DriveLog {
     private double rightEncoder;
 
     public DriveLog() {
-    }
-
-    public DriveLog(double time, double voltage, double stickX, double stickY, double leftSignal, double rightSignal, double acceleration, double heading, int driveType, double leftEncoder, double rightEncoder) {
-        this.time = time;
-        this.voltage = voltage;
-        this.stickX = stickX;
-        this.stickY = stickY;
-        this.leftSignal = leftSignal;
-        this.rightSignal = rightSignal;
-        this.acceleration = acceleration;
-        this.heading = heading;
-        this.driveType = driveType;
-        this.leftEncoder = leftEncoder;
-        this.rightEncoder = rightEncoder;
     }
 
     public double getTime() {
@@ -48,20 +38,52 @@ public class DriveLog {
         this.voltage = voltage;
     }
 
-    public double getStickX() {
-        return stickX;
+    public double getLeftMotorCurrent1() {
+        return leftMotorCurrent1;
     }
 
-    public void setStickX(double stickX) {
-        this.stickX = stickX;
+    public void setLeftMotorCurrent1(double leftMotorCurrent1) {
+        this.leftMotorCurrent1 = leftMotorCurrent1;
     }
 
-    public double getStickY() {
-        return stickY;
+    public double getLeftMotorCurrent2() {
+        return leftMotorCurrent2;
     }
 
-    public void setStickY(double stickY) {
-        this.stickY = stickY;
+    public void setLeftMotorCurrent2(double leftMotorCurrent2) {
+        this.leftMotorCurrent2 = leftMotorCurrent2;
+    }
+
+    public double getRightMotorCurrent1() {
+        return rightMotorCurrent1;
+    }
+
+    public void setRightMotorCurrent1(double rightMotorCurrent1) {
+        this.rightMotorCurrent1 = rightMotorCurrent1;
+    }
+
+    public double getRightMotorCurrent2() {
+        return rightMotorCurrent2;
+    }
+
+    public void setRightMotorCurrent2(double rightMotorCurrent2) {
+        this.rightMotorCurrent2 = rightMotorCurrent2;
+    }
+
+    public double getArcadeSpeed() {
+        return arcadeSpeed;
+    }
+
+    public void setArcadeSpeed(double arcadeSpeed) {
+        this.arcadeSpeed = arcadeSpeed;
+    }
+
+    public double getArcadeRotation() {
+        return arcadeRotation;
+    }
+
+    public void setArcadeRotation(double arcadeRotation) {
+        this.arcadeRotation = arcadeRotation;
     }
 
     public double getLeftSignal() {

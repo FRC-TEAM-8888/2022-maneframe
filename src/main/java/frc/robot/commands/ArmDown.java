@@ -4,16 +4,31 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.subsystems.*;
 
 
-public class ArmDown extends SequentialCommandGroup {
+public class ArmDown extends CommandBase {
+
+    private final ArmSystem armSystem;
 
     public ArmDown(ArmSystem armSystem) {
         addRequirements(armSystem);
-        addCommands(
-                new PrintCommand("ARM DOWN!!"),
-                new InstantCommand(armSystem::moveArmDown, armSystem),
-                new WaitCommand(1.05),
-                new InstantCommand(armSystem::holdArmDown, armSystem)
-        );
+        this.armSystem = armSystem;
+        armSystem.moveArmDown();
+    }
+
+    @Override
+    public void execute() {
+    }
+
+    @Override
+    public boolean isFinished() {
+        return armSystem.isAtRotation() || armSystem.isBottomSwitchTriggered();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        if (!interrupted) {
+            armSystem.holdArmDown();
+        }
+        super.end(interrupted);
     }
 
 }

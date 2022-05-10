@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.google.gson.*;
 import com.revrobotics.*;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -9,6 +10,11 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.*;
 import frc.robot.commands.*;
 import frc.robot.controller.*;
+import frc.robot.logging.*;
+
+import java.io.*;
+import java.time.*;
+import java.time.format.*;
 
 import static frc.robot.Constants.DriveConstants.*;
 
@@ -17,6 +23,11 @@ public class DriveSystem extends SubsystemBase {
 
     private final DifferentialDrive drive;
     private final PowerDistribution pdp = new PowerDistribution(0, PowerDistribution.ModuleType.kCTRE);
+
+    private FileWriter driveLoggingFileWriter;
+    private final Timer timer = new Timer();
+
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 
     // Default to Logitech Gamepad using 2 sticks
     //private final SendableChooser<Integer> driveTypeChooser;
@@ -42,7 +53,7 @@ public class DriveSystem extends SubsystemBase {
         final MotorControllerGroup rightSideMotors = new MotorControllerGroup(rightMotor1, rightMotor2);
 
         drive = new DifferentialDrive(leftSideMotors, rightSideMotors);
-        drive.setDeadband(.01);
+        //drive.setDeadband(.01);
         setDefaultCommand(new DriveTeleop(this, myController, false));
 
         /*
@@ -76,6 +87,8 @@ public class DriveSystem extends SubsystemBase {
 
     public void arcadeDrive(double speed, double turn, boolean squaredInputs) {
         drive.arcadeDrive(speed, turn * -1, squaredInputs);
+        var speeds = DifferentialDrive.arcadeDriveIK(speed, turn * -1, squaredInputs);
+        logDriveData(speed,turn * -1, speeds.left, speeds.right);
     }
 
     public void tankDrive(double leftSide, double rightSide, boolean squaredInputs) {
@@ -89,10 +102,13 @@ public class DriveSystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        /*
         SmartDashboard.putNumber("LEFT POWER 1", pdp.getCurrent(1));
         SmartDashboard.putNumber("LEFT POWER 2", pdp.getCurrent(0));
         SmartDashboard.putNumber("RIGHT POWER 1", pdp.getCurrent(3));
         SmartDashboard.putNumber("RIGHT POWER 2", pdp.getCurrent(2));
+
+         */
         /*
         int chooserDriveType = driveTypeChooser.getSelected();
         if (driveType < 0 || chooserDriveType != driveType) {
@@ -130,5 +146,69 @@ public class DriveSystem extends SubsystemBase {
     }
 
      */
+
+    public void logDriveData(double arcadeSpeed, double arcadeRotation, double leftSignal, double rightSignal) {
+        DriveLog driveLogEntry = new DriveLog();
+        driveLogEntry.setTime(timer.get());
+        driveLogEntry.setVoltage(pdp.getVoltage());
+        driveLogEntry.setLeftMotorCurrent1(pdp.getCurrent(1));
+        driveLogEntry.setLeftMotorCurrent2(pdp.getCurrent(0));
+        driveLogEntry.setRightMotorCurrent1(pdp.getCurrent(3));
+        driveLogEntry.setRightMotorCurrent2(pdp.getCurrent(2));
+        driveLogEntry.setArcadeSpeed(arcadeSpeed);
+        driveLogEntry.setArcadeRotation(arcadeRotation);
+        driveLogEntry.setLeftSignal(leftSignal);
+        driveLogEntry.setRightSignal(rightSignal);
+
+        try {
+            driveLoggingFileWriter.write(gson.toJson(driveLogEntry) + ",");
+        } catch (IOException ioe) {
+            //System.out.println("ERROR: IO error when logging to telemetry file.");
+            ioe.printStackTrace();
+        } catch (Exception e) {
+            //System.out.println("ERROR: Unknown error when logging to telemetry file.");
+            e.printStackTrace();
+        }
+    }
+    public void startLogging() {
+        //Create file name
+        LocalDateTime dt = LocalDateTime.now();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("uuuu-MM-dd_HHmm");
+        String fileName = "/U/" + dt.format(format) + "_Teleop_Telemetry_Log.txt";
+
+        try {
+            File driveLoggingFile = new File(fileName);
+            if (driveLoggingFile.createNewFile()) {
+                driveLoggingFileWriter = new FileWriter(driveLoggingFile);
+                // Start json array
+                driveLoggingFileWriter.write("[");
+            } else {
+                driveLoggingFileWriter = new FileWriter(driveLoggingFile, true);
+            }
+            SmartDashboard.putString("driveLogFileStatus", "green");
+        } catch (IOException ioe) {
+            System.out.println("ERROR: IO Error when opening telemetry log.");
+            ioe.printStackTrace();
+            SmartDashboard.putString("driveLogFileStatus", "red");
+        } catch (Exception e) {
+            System.out.println("ERROR: Unknown error while opening telemetry log.");
+            e.printStackTrace();
+            SmartDashboard.putString("driveLogFileStatus", "red");
+        }
+        timer.start();
+    }
+
+    public void stopLogging() {
+        try {
+            // End json array
+            driveLoggingFileWriter.write("]");
+            driveLoggingFileWriter.flush();
+            driveLoggingFileWriter.close();
+            SmartDashboard.putString("driveLogFileStatus", "blue");
+        } catch (Exception e) {
+            SmartDashboard.putString("driveLogFileStatus", "yellow");
+        }
+        timer.stop();
+    }
 
 }

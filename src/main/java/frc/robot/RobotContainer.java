@@ -52,20 +52,8 @@ public class RobotContainer {
     private void configureButtonBindings() {
         myController.setupIntakeCargo(new IntakeCargo(intakeSystem));
         myController.setupSpitOutCargo(new SpitOutCargo(intakeSystem));
-        myController.setupArmUp(
-                new ConditionalCommand(
-                        new ArmUp(armSystem),
-                        new PrintCommand("Arm already up!"),
-                        armSystem::armIsDown
-                )
-        );
-        myController.setupArmDown(
-                new ConditionalCommand(
-                        new ArmDown(armSystem),
-                        new PrintCommand("Arm already down!"),
-                        armSystem::armIsUp
-                )
-        );
+        myController.setupArmUp(new ArmUp(armSystem));
+        myController.setupArmDown(new ArmDown(armSystem));
     }
 
 
@@ -78,7 +66,8 @@ public class RobotContainer {
         goForAuto = SmartDashboard.getBoolean("Go For Auto", true);
         // An ExampleCommand will run in autonomous
         if (goForAuto) {
-            return new Auto(intakeSystem, driveSystem);
+            return null;
+            //return new Auto(intakeSystem, driveSystem);
         } else {
             return null;
         }
@@ -87,7 +76,6 @@ public class RobotContainer {
     public void disabledInit() {
         // Reset the arm to up... otherwise it could start in the down direction
         armSystem.armDisabled();
-        // Stop DriveTrain
         driveSystem.stop();
         intakeSystem.stop();
     }

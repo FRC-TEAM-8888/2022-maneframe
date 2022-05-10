@@ -21,6 +21,7 @@ public class DriveTeleop extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        driveSystem.startLogging();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -36,6 +37,7 @@ public class DriveTeleop extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        driveSystem.stopLogging();
     }
 
     // Returns true when the command should end.
